@@ -1,0 +1,17 @@
+{
+  "name": "@cdgstudio/etm-builder",
+  "version": "0.0.1",
+  "bin": {
+    "etm": "bin/etm.js"
+  },
+  "dependencies": {
+    "esbuild": "^0.15.14",
+    "glob": "^8.0.3",
+    "juice": "^8.1.0"
+  },
+  "peerDependencies": {
+    "react": ">18.2.0",
+    "react-dom": ">18.2.0",
+    "styled-components": ">5.3.6"
+  }
+}
