@@ -4,7 +4,7 @@ ETM is a tool for creating email template with Component-Based architecture (tha
 
 List of tools:
 
-- [@cdgstudio/etm-builder](https://github.com/cdgstudio/etm/tree/packages/builder/)
+- [@cdgstudio/etm-builder](https://github.com/cdgstudio/etm/tree/master/packages/builder)
 
 ## Contribute
 
