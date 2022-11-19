@@ -1,6 +1,8 @@
 {
   "name": "@cdgstudio/etm-builder",
   "version": "0.0.1",
+  "private": false,
+  "license": "MIT",
   "bin": {
     "etm": "bin/etm.js"
   },
@@ -13,5 +15,15 @@
     "react": ">18.2.0",
     "react-dom": ">18.2.0",
     "styled-components": ">5.3.6"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cdgstudio/etm"
+  },
+  "homepage": "https://github.com/cdgstudio/etm#readme",
+  "bugs": "https://github.com/cdgstudio/etm/issues",
+  "keywords": [
+    "Emails",
+    "React"
+  ]
 }

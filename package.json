@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {},
-  "private": true,
+  "private": false,
   "dependencies": {
     "esbuild": "^0.15.14",
     "glob": "^8.0.3",
