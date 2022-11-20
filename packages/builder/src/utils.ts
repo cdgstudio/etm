@@ -1,6 +1,7 @@
 import g from 'glob';
 import path from 'path';
 import { promisify } from 'util';
+import { writeFile, access, mkdir } from 'fs/promises';
 export const glob = promisify(g);
 
 export function getRootPath(): string {
@@ -26,4 +27,15 @@ export async function getBuildedListOfFiles(): Promise<string[]> {
   const search = promisify(g);
 
   return await search(`${root}/.cache/templates/**/*.js`);
+}
+
+export async function getTsConfigPath(): Promise<string> {
+  try {
+    const root = getRootPath();
+    const fullPath = path.join(root, 'tsconfig.json');
+    await access(fullPath);
+    return fullPath;
+  } catch {
+    throw new Error(`tsconfig.json not found.`);
+  }
 }

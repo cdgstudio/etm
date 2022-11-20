@@ -4,11 +4,16 @@ import path from 'path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ServerStyleSheet } from 'styled-components';
-import { getBuildedListForFiles, getBuildedListOfFiles } from './utils';
+import {
+  getBuildedListForFiles,
+  getBuildedListOfFiles,
+  getTsConfigPath,
+} from './utils';
 import juice from 'juice';
 
 export async function run() {
   const files = await getBuildedListForFiles();
+  const tsconfig = await getTsConfigPath();
 
   await build({
     entryPoints: files,
@@ -16,6 +21,7 @@ export async function run() {
     platform: 'node',
     outdir: './.cache/templates',
     external: ['react', 'react-dom', 'styled-components'],
+    tsconfig: tsconfig,
   });
 
   for (const file of await getBuildedListOfFiles()) {
