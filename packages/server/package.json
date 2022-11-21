@@ -1,0 +1,8 @@
+{
+  "name": "@cdgstudio/etm-server",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "bin": {
+    "etm": "bin/etm-server.js"
+  }
+}

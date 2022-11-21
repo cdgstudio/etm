@@ -1,0 +1,71 @@
+{
+  "name": "server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/server/src",
+  "projectType": "library",
+  "targets": {
+    "serve": {
+      "executor": "@nrwl/js:node",
+      "options": {
+        "buildTarget": "server:build-bin"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "server:build-bin:production"
+        }
+      }
+    },
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/server",
+        "tsConfig": "packages/server/tsconfig.lib.json",
+        "packageJson": "packages/server/package.json",
+        "main": "packages/server/src/index.ts",
+        "assets": ["packages/server/*.md"]
+      }
+    },
+    "build-bin": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/packages/server",
+        "main": "packages/server/bin/etm-server.ts",
+        "tsConfig": "packages/server/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/scripts/publish.mjs server {args.ver} {args.tag}"
+      },
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/server/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/server/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

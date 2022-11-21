@@ -4,11 +4,15 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "strict": true,
     "skipLibCheck": true,
     "baseUrl": "./",
+    "jsx": "react-jsx",
     "paths": {
-      "builder": ["packages/builder/src/index.ts"]
+      "@cdgstudio/etm-builder": ["packages/builder/src/index.ts"],
+      "@cdgstudio/etm-server": ["packages/server/src/index.ts"]
     }
   }
 }

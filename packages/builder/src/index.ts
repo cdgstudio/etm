@@ -10,8 +10,9 @@ import {
   getTsConfigPath,
 } from './utils';
 import juice from 'juice';
+import { RunOptions } from './run.models';
 
-export async function run() {
+export async function run(options: RunOptions = {}) {
   const files = await getBuildedListForFiles();
   const tsconfig = await getTsConfigPath();
 
@@ -22,6 +23,7 @@ export async function run() {
     outdir: './.cache/templates',
     external: ['react', 'react-dom', 'styled-components'],
     tsconfig: tsconfig,
+    write: options.write ?? true,
   });
 
   for (const file of await getBuildedListOfFiles()) {
