@@ -1,7 +1,7 @@
+import { access } from 'fs/promises';
 import g from 'glob';
 import path from 'path';
 import { promisify } from 'util';
-import { writeFile, access, mkdir } from 'fs/promises';
 export const glob = promisify(g);
 
 export function getRootPath(): string {
@@ -15,7 +15,7 @@ export function getTemplateRootPath() {
   return path.join(getRootPath(), 'templates');
 }
 
-export async function getBuildedListForFiles(): Promise<string[]> {
+export async function getFilesToBuild(): Promise<string[]> {
   const root = getTemplateRootPath();
   const search = promisify(g);
 

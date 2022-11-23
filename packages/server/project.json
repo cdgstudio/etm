@@ -7,12 +7,7 @@
     "serve": {
       "executor": "@nrwl/js:node",
       "options": {
-        "buildTarget": "server:build-bin"
-      },
-      "configurations": {
-        "production": {
-          "buildTarget": "server:build-bin:production"
-        }
+        "buildTarget": "server:build"
       }
     },
     "build": {
@@ -24,24 +19,6 @@
         "packageJson": "packages/server/package.json",
         "main": "packages/server/src/index.ts",
         "assets": ["packages/server/*.md"]
-      }
-    },
-    "build-bin": {
-      "executor": "@nrwl/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "target": "node",
-        "compiler": "tsc",
-        "outputPath": "dist/packages/server",
-        "main": "packages/server/bin/etm-server.ts",
-        "tsConfig": "packages/server/tsconfig.lib.json"
-      },
-      "configurations": {
-        "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
-        }
       }
     },
     "publish": {

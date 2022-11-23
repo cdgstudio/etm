@@ -1,19 +1,14 @@
 import { build } from 'esbuild';
-import { writeFile, access, mkdir } from 'fs/promises';
-import path from 'path';
+import juice from 'juice';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ServerStyleSheet } from 'styled-components';
-import {
-  getBuildedListForFiles,
-  getBuildedListOfFiles,
-  getTsConfigPath,
-} from './utils';
-import juice from 'juice';
-import { RunOptions } from './run.models';
+import { getFilesToBuild, getTsConfigPath } from './utils';
 
-export async function run(options: RunOptions = {}) {
-  const files = await getBuildedListForFiles();
+export { getBuildedListOfFiles } from './utils';
+
+export async function run() {
+  const files = await getFilesToBuild();
   const tsconfig = await getTsConfigPath();
 
   await build({
@@ -21,36 +16,18 @@ export async function run(options: RunOptions = {}) {
     bundle: true,
     platform: 'node',
     outdir: './.cache/templates',
-    external: ['react', 'react-dom', 'styled-components'],
+    external: ['./node_modules/*'],
     tsconfig: tsconfig,
-    write: options.write ?? true,
+    write: true,
   });
+}
 
-  for (const file of await getBuildedListOfFiles()) {
-    const fileName = path.basename(file);
-    const noExt = fileName.substring(0, fileName.lastIndexOf('.'));
-    const htmlFileName = noExt + '.html';
-
-    const importedFile = await import(file);
-
-    if ('default' in importedFile === false) {
-      throw new Error(`File "${file}" does not have default export.`);
-    }
-
-    const css = new ServerStyleSheet();
-    const html = renderToStaticMarkup(
-      css.collectStyles(createElement(importedFile.default))
-    );
-    const style = css.getStyleTags();
-    const htmlWithStyles = html.replace('</head>', `${style}</head>`);
-    const inlineCss = juice(htmlWithStyles);
-
-    try {
-      await access('./dist');
-    } catch {
-      await mkdir('dist');
-    }
-
-    await writeFile(`./dist/${htmlFileName}`, inlineCss);
-  }
+export function generateTemplate(
+  ...args: Parameters<typeof createElement>
+): string {
+  const css = new ServerStyleSheet();
+  const html = renderToStaticMarkup(css.collectStyles(createElement(...args)));
+  const style = css.getStyleTags();
+  const htmlWithStyles = html.replace('</head>', `${style}</head>`);
+  return juice(htmlWithStyles);
 }
