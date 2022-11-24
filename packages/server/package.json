@@ -1,0 +1,29 @@
+{
+  "name": "@cdgstudio/etm-server",
+  "version": "0.0.1",
+  "private": false,
+  "license": "MIT",
+  "bin": {
+    "etm-server": "src/index.js"
+  },
+  "dependencies": {
+    "@cdgstudio/etm-builder": "^0.0.1",
+    "@nestjs/common": "^9.0.0",
+    "@nestjs/core": "^9.0.0",
+    "@nestjs/swagger": "^6.0.0"
+  },
+  "devDependencies": {
+    "typescript": "~4.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cdgstudio/etm"
+  },
+  "homepage": "https://github.com/cdgstudio/etm#readme",
+  "bugs": "https://github.com/cdgstudio/etm/issues",
+  "keywords": [
+    "Emails",
+    "NestJs",
+    "OpenAPI"
+  ]
+}
