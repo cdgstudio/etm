@@ -42,6 +42,7 @@ Create `Example.tsx` with default export
 
 ```tsx
 import styled from 'styled-components';
+import { ApiProperty } from '@nestjs/swagger';
 
 const Title = styled.h1`
   font-size: 1.5em;
@@ -49,10 +50,20 @@ const Title = styled.h1`
   color: palevioletred;
 `;
 
-export default function () {
+class ExampleInput {
+  @ApiProperty({
+    description: 'Login of user',
+    type: String,
+  })
+  login!: string;
+}
+
+export Params = ExampleInput;
+
+export default function (input: ExampleInput) {
   return (
     <BaseLayout>
-      <Title>Hello</Title>
+      <Title>Hello {input.login}</Title>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor
         finibus libero, ut varius nisl euismod eget. Aliquam fermentum eleifend
@@ -89,7 +100,7 @@ function Signature() {
 
 ### 3. Render to HTML
 
-All files in `templates` will be rendered to `dist` dictionary as static HTML
+All files in `templates` will be rendered to `dist` dictionary as ready React components
 
 ```bash
 npx etm
