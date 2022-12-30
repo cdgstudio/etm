@@ -1,19 +1,34 @@
-import { readdirSync } from 'fs';
 import { generateTemplate } from '@cdgstudio/etm-builder';
-import { Body, Post } from '@nestjs/common';
-import path from 'path';
+import {
+  applyDecorators,
+  Body,
+  Controller,
+  ControllerOptions,
+  Post,
+} from '@nestjs/common';
+import { ApiProperty } from '@nestjs/swagger';
+import { ClassConstructor } from 'class-transformer';
+import { readdirSync } from 'fs';
+import * as path from 'path';
+import { EmailTemplateProperties } from './email.models';
+import { classFactory } from './factories';
+import { getApiPropertyOptions } from './prop-types-to-swagger';
 
-export interface DecoratorParams {
-  pathToTemplates?: string;
+export interface EmailControllerOptions extends ControllerOptions {
+  pathToTemplates: string;
 }
 
-export function EmailTemplateEndpoints({
-  pathToTemplates,
-}: DecoratorParams = {}): ClassDecorator {
+export function EmailController(params: EmailControllerOptions) {
+  return applyDecorators(
+    Controller(params),
+    AddEmailTemplateEndpoints(params.pathToTemplates)
+  );
+}
+
+function AddEmailTemplateEndpoints(pathToTemplates: string): ClassDecorator {
   const defaultPath = pathToTemplates ?? getDefaultPath();
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  return function (constructor: Function) {
+  return function (constructor: CallableFunction) {
     const fileNames = readdirSync(defaultPath);
     fileNames
       .filter((fileName) => fileName.endsWith('.js'))
@@ -34,33 +49,44 @@ function getDefaultPath(fullPath?: string): string {
   throw new Error(`PWD env is undefined. Did you run script with node?`);
 }
 
-function createEndpoint(
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  controller: Function,
-  filePath: string
-) {
-  const { Params, template } = importFile(filePath);
+function createEndpoint(controller: CallableFunction, filePath: string) {
+  const fileName = path.parse(filePath).name;
+  const defaultElement = importFile(filePath);
 
   const prototype = controller.prototype;
-  prototype[filePath] = generateTemplateFunction(filePath, template);
+  prototype[fileName] = generateTemplateFunction(fileName, defaultElement);
 
-  if (Params) {
-    Reflect.defineMetadata('design:paramtypes', [Params], prototype, filePath);
+  if (defaultElement.propTypes) {
+    const Params = classFactory(fileName);
+    addDecorators(Params, defaultElement);
+    Reflect.defineMetadata('design:paramtypes', [Params], prototype, fileName);
 
     const body = Body();
-    body(prototype, filePath, 0);
+    body(prototype, fileName, 0);
   }
 
-  const post = Post('/' + path.basename(filePath));
+  const post = Post('/' + fileName);
   post({}, filePath, {
-    value: prototype[filePath],
+    value: prototype[fileName],
     writable: true,
     enumerable: false,
     configurable: true,
   });
 }
 
-function importFile(path: string): { template: string; Params?: unknown } {
+// @todo: add types
+function addDecorators(where: ClassConstructor<unknown>, element: any) {
+  for (const key of Object.keys(element.propTypes)) {
+    const types = getApiPropertyOptions(element, key);
+    if (types === null) {
+      continue;
+    }
+    const dec = ApiProperty(types);
+    dec(where.prototype, key);
+  }
+}
+
+function importFile(path: string): EmailTemplateProperties {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const importedFile = require(path);
 
@@ -68,20 +94,13 @@ function importFile(path: string): { template: string; Params?: unknown } {
     throw new Error(`File ${path} must have default export`);
   }
 
-  if ('Params' in importedFile === false) {
-    console.warn(`File ${path} does not have params`);
-  }
-
-  return {
-    Params: importedFile.Params,
-    template: importedFile.default,
-  };
+  return importedFile.default;
 }
 
-function generateTemplateFunction(fileName: string, template: string) {
+function generateTemplateFunction(functionName: string, template: any) {
   return {
-    [fileName]: async (body: any) => {
+    [functionName]: async (body: any) => {
       return generateTemplate(template, body);
     },
-  }[fileName];
+  }[functionName];
 }

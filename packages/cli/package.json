@@ -1,0 +1,23 @@
+{
+  "name": "@cdgstudio/etm-cli",
+  "version": "0.0.1",
+  "private": false,
+  "license": "MIT",
+  "bin": {
+    "etm": "bin/etm.js"
+  },
+  "dependencies": {
+    "@cdgstudio/etm-builder": "^0.0.1",
+    "commander": "^9.4.1",
+    "yargs": "^17.6.2",
+    "ejs": "^3.1.8",
+    "ora": "^5.4.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cdgstudio/etm"
+  },
+  "homepage": "https://github.com/cdgstudio/etm#readme",
+  "bugs": "https://github.com/cdgstudio/etm/issues",
+  "keywords": []
+}

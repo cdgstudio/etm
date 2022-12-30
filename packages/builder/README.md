@@ -2,7 +2,7 @@
 
 ## Installation
 
-Install library and with all peer dependencies
+Install library with all peer dependencies
 
 ```bash
 npm i @codegen/etm-builder
@@ -12,7 +12,7 @@ npm i @codegen/etm-builder
 npm i react react-dom styled-components
 ```
 
-If you use TypeScript do not forget installing types:
+If you use TypeScript do not forget install types:
 
 ```bash
 npm i @types/react @types/react-dom @types/styled-components

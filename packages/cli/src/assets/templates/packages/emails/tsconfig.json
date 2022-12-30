@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "outDir": "../../dist/emails",
+    "baseUrl": "./",
+    "skipLibCheck": true,
+    "strict": true,
+    "module": "CommonJS"
+  },
+  "include": ["src/**/*"]
+}
