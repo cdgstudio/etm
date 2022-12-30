@@ -1,25 +1,33 @@
-import { build } from 'esbuild';
 import juice from 'juice';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ServerStyleSheet } from 'styled-components';
-import { getFilesToBuild, getTsConfigPath } from './utils';
+import ts from 'typescript';
 
-export { getBuildedListOfFiles } from './utils';
+export async function compile() {
+  const currentDir = process.env.PWD || './';
+  const configFile = ts.findConfigFile(
+    currentDir,
+    ts.sys.fileExists,
+    'tsconfig.json'
+  );
 
-export async function run() {
-  const files = await getFilesToBuild();
-  const tsconfig = await getTsConfigPath();
+  if (!configFile) throw Error('tsconfig.json not found');
 
-  await build({
-    entryPoints: files,
-    bundle: true,
-    platform: 'node',
-    outdir: './.cache/templates',
-    external: ['./node_modules/*'],
-    tsconfig: tsconfig,
-    write: true,
+  const { config } = ts.readConfigFile(configFile, ts.sys.readFile);
+  const { options, fileNames, errors } = ts.parseJsonConfigFileContent(
+    config,
+    ts.sys,
+    currentDir
+  );
+
+  const program = ts.createProgram({
+    options,
+    rootNames: fileNames,
+    configFileParsingDiagnostics: errors,
   });
+
+  program.emit();
 }
 
 export function generateTemplate(
@@ -28,6 +36,10 @@ export function generateTemplate(
   const css = new ServerStyleSheet();
   const html = renderToStaticMarkup(css.collectStyles(createElement(...args)));
   const style = css.getStyleTags();
-  const htmlWithStyles = html.replace('</head>', `${style}</head>`);
+
+  const htmlWithStyles = html.includes('</head>')
+    ? html.replace('</head>', `${style}</head>`)
+    : `${style}${html}`;
+
   return juice(htmlWithStyles);
 }
